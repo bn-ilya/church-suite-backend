@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "form_live_chats",
+  "info": {
+    "singularName": "form-live-chat",
+    "pluralName": "form-live-chats",
+    "displayName": "Form LiveChat",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "tel": {
+      "type": "string"
+    },
+    "count": {
+      "type": "integer"
+    },
+    "comment": {
+      "type": "string"
+    },
+    "cheque": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "code": {
+      "type": "uid",
+      "required": false,
+      "minLength": 4,
+      "maxLength": 4,
+      "targetField": "name"
+    }
+  }
+}
