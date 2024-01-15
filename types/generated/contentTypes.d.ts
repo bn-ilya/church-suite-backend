@@ -726,11 +726,6 @@ export interface ApiFormLiveChatFormLiveChat extends Schema.CollectionType {
     count: Attribute.Integer;
     comment: Attribute.String;
     cheque: Attribute.Media;
-    code: Attribute.UID &
-      Attribute.SetMinMaxLength<{
-        minLength: 4;
-        maxLength: 4;
-      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -742,6 +737,42 @@ export interface ApiFormLiveChatFormLiveChat extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::form-live-chat.form-live-chat',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLiveChatClientLiveChatClient extends Schema.CollectionType {
+  collectionName: 'live_chat_clients';
+  info: {
+    singularName: 'live-chat-client';
+    pluralName: 'live-chat-clients';
+    displayName: 'Live-Chat Client';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    city: Attribute.String & Attribute.Required;
+    tel: Attribute.BigInteger & Attribute.Required;
+    count: Attribute.Integer & Attribute.Required;
+    comment: Attribute.Text;
+    cheque: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::live-chat-client.live-chat-client',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::live-chat-client.live-chat-client',
       'oneToOne',
       'admin::user'
     > &
@@ -767,6 +798,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::event.event': ApiEventEvent;
       'api::form-live-chat.form-live-chat': ApiFormLiveChatFormLiveChat;
+      'api::live-chat-client.live-chat-client': ApiLiveChatClientLiveChatClient;
     }
   }
 }

@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "form_live_chats",
+  "collectionName": "live_chat_clients",
   "info": {
-    "singularName": "form-live-chat",
-    "pluralName": "form-live-chats",
-    "displayName": "Form LiveChat",
+    "singularName": "live-chat-client",
+    "pluralName": "live-chat-clients",
+    "displayName": "Live-Chat Client",
     "description": ""
   },
   "options": {
@@ -13,19 +13,23 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "city": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "tel": {
-      "type": "string"
+      "type": "biginteger",
+      "required": true
     },
     "count": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
     },
     "comment": {
-      "type": "string"
+      "type": "text"
     },
     "cheque": {
       "type": "media",
