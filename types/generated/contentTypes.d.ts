@@ -761,7 +761,7 @@ export interface ApiLiveChatClientLiveChatClient extends Schema.CollectionType {
     tel: Attribute.BigInteger & Attribute.Required;
     count: Attribute.Integer & Attribute.Required;
     comment: Attribute.Text;
-    cheque: Attribute.Media;
+    cheques: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

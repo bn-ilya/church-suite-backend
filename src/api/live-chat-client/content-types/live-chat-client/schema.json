@@ -31,7 +31,7 @@
     "comment": {
       "type": "text"
     },
-    "cheque": {
+    "cheques": {
       "type": "media",
       "multiple": true,
       "required": false,
