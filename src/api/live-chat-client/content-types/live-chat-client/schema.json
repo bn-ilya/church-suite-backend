@@ -41,6 +41,12 @@
         "videos",
         "audios"
       ]
+    },
+    "code": {
+      "type": "biginteger",
+      "max": "04",
+      "min": "04",
+      "required": false
     }
   }
 }
