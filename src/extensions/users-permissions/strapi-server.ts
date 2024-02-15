@@ -1,15 +1,15 @@
-
+import {  } from "./external-api";
+const {sendVoiceCode} = require("./external-api"); 
 const utils = require('@strapi/utils');
-const { getService } = require("@strapi/plugin-users-permissions/server/utils");
 
 const { sanitize } = utils;
 
-const sanitizeOutput = (user, ctx) => {
-  const schema = strapi.getModel('plugin::users-permissions.user');
-  const { auth } = ctx.state;
+// const sanitizeOutput = (user, ctx) => {
+//   const schema = strapi.getModel('plugin::users-permissions.user');
+//   const { auth } = ctx.state;
 
-  return sanitize.contentAPI.output(user, schema, { auth });
-};
+//   return sanitize.contentAPI.output(user, schema, { auth });
+// };
 
 module.exports = (plugin) => {
 
@@ -24,7 +24,7 @@ module.exports = (plugin) => {
     
     if (userWithThisNumber) {
         return ctx.badRequest(
-        null
+          "Такой пользователь уже существует"
         );
     }
     
@@ -32,17 +32,23 @@ module.exports = (plugin) => {
     
     const user = {
         username,
-        email: 'eqxam2ple@example.ru',
+        email: 'eqxample@example.ru',
         phone,
         provider: 'local',
         code
     };
   
+    const response = {
+      username,
+      phone
+    }
+
     try {
-      const response = await strapi.services['plugin::users-permissions.user'].add(user);
-      ctx.created(user);
+      await strapi.services['plugin::users-permissions.user'].add(user);
+      await sendVoiceCode(code);
+      ctx.created(response);
     } catch (error) {
-      ctx.badRequest(null);
+      ctx.badRequest(error);
     }
   };
 
