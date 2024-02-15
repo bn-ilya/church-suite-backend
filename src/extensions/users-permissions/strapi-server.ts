@@ -31,7 +31,6 @@ module.exports = (plugin) => {
     }
 
     const username = await generateUniqueUsername(transliterate(name));
-    console.log(username);
     const code = String(random4Digit());
     
     const user = {
@@ -51,7 +50,7 @@ module.exports = (plugin) => {
 
     try {
       await strapi.services['plugin::users-permissions.user'].add(user);
-      // await sendVoiceCode(code);
+      // await sendVoiceCode(code, +79284131458);
       ctx.created(response);
     } catch (error) {
       ctx.badRequest(error);

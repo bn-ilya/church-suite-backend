@@ -4,17 +4,17 @@ axios.defaults.baseURL = 'https://direct.i-dgtl.ru/api/v1';
 axios.defaults.headers.common['Authorization'] = "Basic NjgyNDp2OEpxSUhEVGJxSVlUdEIzTkNXdmwy";
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-export async function sendVoiceCode(code: string) {
+export async function sendVoiceCode(code: string, phone: string) {
   const response = await axios({
     method: 'post',
     url: '/message',
     data: {
       channelType: "VOICECODE",
       senderName: "voicecode",
-      destination: "+79284131458",
+      destination: phone,
       content: {
         contentType: "text",
-        text: `Код авторизации от live-chat: ${code}`
+        text: `Код авторизации от лайв чат: ${code}`
       }
     }
   });
