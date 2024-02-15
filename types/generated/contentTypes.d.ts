@@ -362,6 +362,114 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiEventEvent extends Schema.CollectionType {
+  collectionName: 'events';
+  info: {
+    singularName: 'event';
+    pluralName: 'events';
+    displayName: 'Event';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    date: Attribute.DateTime;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiFormLiveChatFormLiveChat extends Schema.CollectionType {
+  collectionName: 'form_live_chats';
+  info: {
+    singularName: 'form-live-chat';
+    pluralName: 'form-live-chats';
+    displayName: 'Form LiveChat';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    city: Attribute.String;
+    tel: Attribute.String;
+    count: Attribute.Integer;
+    comment: Attribute.String;
+    cheque: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::form-live-chat.form-live-chat',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::form-live-chat.form-live-chat',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLiveChatClientLiveChatClient extends Schema.CollectionType {
+  collectionName: 'live_chat_clients';
+  info: {
+    singularName: 'live-chat-client';
+    pluralName: 'live-chat-clients';
+    displayName: 'Live-Chat Client';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    city: Attribute.String & Attribute.Required;
+    tel: Attribute.BigInteger & Attribute.Required;
+    count: Attribute.Integer & Attribute.Required;
+    comment: Attribute.Text;
+    cheques: Attribute.Media;
+    code: Attribute.BigInteger &
+      Attribute.SetMinMax<{
+        min: '04';
+        max: '04';
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::live-chat-client.live-chat-client',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::live-chat-client.live-chat-client',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -631,7 +739,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -660,6 +767,8 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    phone: Attribute.String;
+    code: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -670,114 +779,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'plugin::users-permissions.user',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiEventEvent extends Schema.CollectionType {
-  collectionName: 'events';
-  info: {
-    singularName: 'event';
-    pluralName: 'events';
-    displayName: 'Event';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String;
-    date: Attribute.DateTime;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::event.event',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::event.event',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiFormLiveChatFormLiveChat extends Schema.CollectionType {
-  collectionName: 'form_live_chats';
-  info: {
-    singularName: 'form-live-chat';
-    pluralName: 'form-live-chats';
-    displayName: 'Form LiveChat';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String;
-    city: Attribute.String;
-    tel: Attribute.String;
-    count: Attribute.Integer;
-    comment: Attribute.String;
-    cheque: Attribute.Media;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::form-live-chat.form-live-chat',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::form-live-chat.form-live-chat',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiLiveChatClientLiveChatClient extends Schema.CollectionType {
-  collectionName: 'live_chat_clients';
-  info: {
-    singularName: 'live-chat-client';
-    pluralName: 'live-chat-clients';
-    displayName: 'Live-Chat Client';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String & Attribute.Required;
-    city: Attribute.String & Attribute.Required;
-    tel: Attribute.BigInteger & Attribute.Required;
-    count: Attribute.Integer & Attribute.Required;
-    comment: Attribute.Text;
-    cheques: Attribute.Media;
-    code: Attribute.BigInteger &
-      Attribute.SetMinMax<{
-        min: '04';
-        max: '04';
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::live-chat-client.live-chat-client',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::live-chat-client.live-chat-client',
       'oneToOne',
       'admin::user'
     > &
@@ -795,15 +796,15 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::event.event': ApiEventEvent;
+      'api::form-live-chat.form-live-chat': ApiFormLiveChatFormLiveChat;
+      'api::live-chat-client.live-chat-client': ApiLiveChatClientLiveChatClient;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::event.event': ApiEventEvent;
-      'api::form-live-chat.form-live-chat': ApiFormLiveChatFormLiveChat;
-      'api::live-chat-client.live-chat-client': ApiLiveChatClientLiveChatClient;
     }
   }
 }
