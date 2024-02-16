@@ -1,4 +1,5 @@
 const {transliterate} = require("transliteration");
+import { edit } from './../../../dist/build/2089.383b46c5.chunk';
 const {sendVoiceCode} = require("./external-api"); 
 const utils = require('@strapi/utils');
 
@@ -56,6 +57,76 @@ module.exports = (plugin) => {
       ctx.badRequest(error);
     }
   };
+  
+  plugin.controllers.user.verifyAccount = async (ctx) => {
+    const { phone, code } = ctx.request.body;
+
+    const verifyUser = await strapi
+    .query('plugin::users-permissions.user')
+    .findOne({ where: {phone, code} });
+
+    if (!verifyUser) {
+      return ctx.badRequest(
+        "Неверный код подтверждения"
+      );
+    }
+
+    let updateData = {
+      code: '',
+      confirmed: true
+    };
+
+    const data = await strapi.plugins['users-permissions'].services.user.edit(verifyUser.id, updateData);
+    const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
+      id: data.id,
+    })
+
+    ctx.send({ jwt, user: data });
+  };
+
+  plugin.controllers.user.login = async (ctx) => {
+    const {phone, channel} = ctx.request.body;
+
+    const user = await strapi
+    .query('plugin::users-permissions.user')
+    .findOne({ where: {phone} });
+
+    if (!user) {
+        return ctx.badRequest(
+          "Пользователя с таким номером не существует"
+        );
+    }
+    const code = String(random4Digit());
+
+    let updateData = {
+      code
+    };
+
+    const response = {
+      status: 'send'
+    }
+
+    try {
+      await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
+      await sendVoiceCode(code, "+79284131458");
+      ctx.created(response);
+    } catch (error) {
+      ctx.badRequest(error);
+    }
+  }
+  
+  plugin.routes["content-api"].routes = [...plugin.routes["content-api"].routes, 
+    {
+      method: "POST",
+      path: "/verify",
+      handler: "user.verifyAccount",
+    },
+    {
+      method: "POST",
+      path: "/login",
+      handler: "user.login",
+    },
+  ];
 
   return plugin;
 };

@@ -21,3 +21,7 @@ export async function sendVoiceCode(code: string, phone: string) {
 
   return response;
 }
+
+export async function sendCode(code: string, phone: string) {
+
+}
