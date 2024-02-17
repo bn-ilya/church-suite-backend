@@ -5,16 +5,41 @@ const utils = require('@strapi/utils');
 
 const { sanitize } = utils;
 
+const sanitizeOutput = (user, ctx) => {
+  const schema = strapi.getModel('plugin::users-permissions.user');
+  const { auth } = ctx.state;
+
+  return sanitize.contentAPI.output(user, schema, { auth });
+};
+
 async function generateUniqueUsername(username: string, index = 0) {
   const userWithThisUsername = await strapi
   .query('plugin::users-permissions.user')
-  .findOne({ where: {username: username + (index || '')} });
+  .findOne({ where: {username: username + index} });
 
   if (userWithThisUsername) return await generateUniqueUsername(username, index + 1);
   return username + index;
 }
 
 module.exports = (plugin) => {
+  plugin.controllers.user.me = async (ctx) => {
+    const user = ctx.state.user;
+    
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    
+    const lcForm = await strapi
+    .query('api::live-chat-client.live-chat-client')
+    .findOne({ where: {id: user["lc_form_id"]} });
+
+    if (lcForm) {
+      user.lcForm = lcForm;
+    }
+
+    ctx.body = await sanitizeOutput(user, ctx);
+  }
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
@@ -40,9 +65,19 @@ module.exports = (plugin) => {
         email: 'eqxample@example.ru',
         phone,
         provider: 'local',
-        code
+        code,
+        role: undefined
     };
-  
+
+    const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
+    const settings: any = await pluginStore.get({ key: 'advanced' });
+
+    const role = await strapi
+      .query('plugin::users-permissions.role')
+      .findOne({ where: { type: settings.default_role } });
+
+    user.role = role.id;
+
     const response = {
       name,
       username,
@@ -51,7 +86,7 @@ module.exports = (plugin) => {
 
     try {
       await strapi.services['plugin::users-permissions.user'].add(user);
-      // await sendVoiceCode(code, +79284131458);
+      await sendVoiceCode(code, +79284131458);
       ctx.created(response);
     } catch (error) {
       ctx.badRequest(error);

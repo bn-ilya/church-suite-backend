@@ -73,6 +73,9 @@
     },
     "name": {
       "type": "string"
+    },
+    "lc_form_id": {
+      "type": "string"
     }
   }
 }
