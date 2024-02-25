@@ -12,16 +12,8 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "required": true
-    },
     "city": {
       "type": "string",
-      "required": true
-    },
-    "tel": {
-      "type": "biginteger",
       "required": true
     },
     "count": {
@@ -41,12 +33,6 @@
         "videos",
         "audios"
       ]
-    },
-    "code": {
-      "type": "biginteger",
-      "max": "04",
-      "min": "04",
-      "required": false
     }
   }
 }

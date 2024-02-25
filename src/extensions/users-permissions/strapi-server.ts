@@ -1,5 +1,4 @@
 const {transliterate} = require("transliteration");
-import { edit } from './../../../dist/build/2089.383b46c5.chunk';
 const {sendVoiceCode} = require("./external-api"); 
 const utils = require('@strapi/utils');
 
@@ -22,20 +21,31 @@ async function generateUniqueUsername(username: string, index = 0) {
 }
 
 module.exports = (plugin) => {
+  const checkVerified = (userId: string) => {
+    setTimeout(async ()=>{
+      const user = await strapi
+        .query('plugin::users-permissions.user')
+        .findOne({ where: {id: userId} });
+
+      if(!user.confirmed) {
+        await strapi.plugins['users-permissions'].services.user.remove({id: user.id});
+      } 
+    }, 180000)
+  }
+
   plugin.controllers.user.me = async (ctx) => {
     const user = ctx.state.user;
-    
+
     if (!user) {
       return ctx.unauthorized();
     }
-
     
     const lcForm = await strapi
     .query('api::live-chat-client.live-chat-client')
-    .findOne({ where: {id: user["lc_form_id"]} });
+    .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques'], });
 
     if (lcForm) {
-      user.lcForm = lcForm;
+      user["lc_form"] = lcForm;
     }
 
     ctx.body = await sanitizeOutput(user, ctx);
@@ -84,8 +94,10 @@ module.exports = (plugin) => {
       phone
     }
 
+    
     try {
-      await strapi.services['plugin::users-permissions.user'].add(user);
+      const createdUser = await strapi.services['plugin::users-permissions.user'].add(user);
+      checkVerified(createdUser.id);
       await sendVoiceCode(code, +79284131458);
       ctx.created(response);
     } catch (error) {
@@ -116,6 +128,8 @@ module.exports = (plugin) => {
       id: data.id,
     })
 
+
+
     ctx.send({ jwt, user: data });
   };
 
@@ -138,7 +152,8 @@ module.exports = (plugin) => {
     };
 
     const response = {
-      status: 'send'
+      status: 'success',
+      phone
     }
 
     try {
@@ -149,6 +164,64 @@ module.exports = (plugin) => {
       ctx.badRequest(error);
     }
   }
+
+  plugin.controllers.user.setLcForm = async (ctx) => {
+    const user = ctx.state.user;
+    const {lcFormId} = ctx.request.body;
+
+    const lcForm = await strapi
+    .query('api::live-chat-client.live-chat-client')
+    .findOne({ where: {id: lcFormId} });
+
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    if (!lcForm) {
+      return ctx.badRequest(
+        "Формы с ID не найдено"
+      );
+    }
+    
+
+    let updateData = {
+      "lc_form_id": String(lcFormId)
+    };
+
+    await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
+
+    ctx.send({ status: "success" });
+  };
+
+  plugin.controllers.user.updateUser = async (ctx) => {
+    const user = ctx.state.user;
+    const data = ctx.request.body;
+
+    if (!user) {
+      return ctx.unauthorized();
+    }
+  
+    let updateData = data;
+
+    await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
+
+    ctx.send({ status: "success" });
+  };
+
+  plugin.controllers.user.deleteUser = async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    const resDeleteForm = await strapi
+    .query('api::live-chat-client.live-chat-client')
+    .delete({ where: {id: user.lc_form_id} });
+    const resDeleteUser = await strapi.plugins['users-permissions'].services.user.remove({id: user.id});
+
+    ctx.send({ status: "success" });
+  };
   
   plugin.routes["content-api"].routes = [...plugin.routes["content-api"].routes, 
     {
@@ -160,6 +233,21 @@ module.exports = (plugin) => {
       method: "POST",
       path: "/login",
       handler: "user.login",
+    },
+    {
+      method: "POST",
+      path: "/setLcForm",
+      handler: "user.setLcForm",
+    },
+    {
+      method: "PUT",
+      path: "/profile",
+      handler: "user.updateUser",
+    },
+    {
+      method: "DELETE",
+      path: "/profile",
+      handler: "user.deleteUser",
     },
   ];
 
