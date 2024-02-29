@@ -99,7 +99,7 @@ module.exports = (plugin) => {
         username,
         id: createdUser.id
       }
-      await sendVoiceCode(code, +79284131458);
+      await sendVoiceCode(code, `+7${phone}`);
       ctx.created(response);
     } catch (error) {
       ctx.badRequest(error);
@@ -164,10 +164,10 @@ module.exports = (plugin) => {
       await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
       switch (channel) {
         case "voice":
-          await sendVoiceCode(code, "+79284131458");
+          await sendVoiceCode(code, `+7${user.phone}`);
           break;
         case "sms":
-          await sendSmsCode(code, "+79284131458");
+          await sendSmsCode(code, `+7${user.phone}`);
           break;
       }
       ctx.created(response);
