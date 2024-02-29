@@ -1,3 +1,5 @@
+import { sendSmsCode } from "./external-api/api";
+
 const {transliterate} = require("transliteration");
 const {sendVoiceCode} = require("./external-api"); 
 const utils = require('@strapi/utils');
@@ -27,7 +29,7 @@ module.exports = (plugin) => {
         .query('plugin::users-permissions.user')
         .findOne({ where: {id: userId} });
 
-      if(!user.confirmed) {
+      if(user && !user.confirmed) {
         await strapi.plugins['users-permissions'].services.user.remove({id: user.id});
       } 
     }, 180000)
@@ -88,16 +90,15 @@ module.exports = (plugin) => {
 
     user.role = role.id;
 
-    const response = {
-      name,
-      username,
-      phone
-    }
-
     
     try {
       const createdUser = await strapi.services['plugin::users-permissions.user'].add(user);
       checkVerified(createdUser.id);
+      const response = {
+        name,
+        username,
+        id: createdUser.id
+      }
       await sendVoiceCode(code, +79284131458);
       ctx.created(response);
     } catch (error) {
@@ -106,15 +107,15 @@ module.exports = (plugin) => {
   };
   
   plugin.controllers.user.verifyAccount = async (ctx) => {
-    const { phone, code } = ctx.request.body;
+    const { id, code } = ctx.request.body;
 
     const verifyUser = await strapi
     .query('plugin::users-permissions.user')
-    .findOne({ where: {phone, code} });
+    .findOne({ where: {id, code} });
 
     if (!verifyUser) {
       return ctx.badRequest(
-        "Неверный код подтверждения"
+        "Пользователь с указанным кодом не найден"
       );
     }
 
@@ -134,11 +135,14 @@ module.exports = (plugin) => {
   };
 
   plugin.controllers.user.login = async (ctx) => {
-    const {phone, channel} = ctx.request.body;
+    const {phone, id, channel} = ctx.request.body;
 
+    if (!phone && !id) return ctx.badRequest(
+      "Не заданы входные данные"
+    );
     const user = await strapi
     .query('plugin::users-permissions.user')
-    .findOne({ where: {phone} });
+    .findOne(phone ? { where: {phone} } : { where: {id} });
 
     if (!user) {
         return ctx.badRequest(
@@ -153,12 +157,19 @@ module.exports = (plugin) => {
 
     const response = {
       status: 'success',
-      phone
+      id: user.id
     }
 
     try {
       await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
-      await sendVoiceCode(code, "+79284131458");
+      switch (channel) {
+        case "voice":
+          await sendVoiceCode(code, "+79284131458");
+          break;
+        case "sms":
+          await sendSmsCode(code, "+79284131458");
+          break;
+      }
       ctx.created(response);
     } catch (error) {
       ctx.badRequest(error);

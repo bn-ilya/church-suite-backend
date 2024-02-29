@@ -22,6 +22,17 @@ export async function sendVoiceCode(code: string, phone: string) {
   return response;
 }
 
-export async function sendCode(code: string, phone: string) {
+export async function sendSmsCode(code: string, phone: string) {
+  const response = await axios({
+    method: 'post',
+    url: '/message',
+    data: {
+      channelType: "SMS",
+      senderName: "sms_promo",
+      destination: phone,
+      content: `Код авторизации от лайв чат: ${code}`
+    }
+  });
 
+  return response;
 }
