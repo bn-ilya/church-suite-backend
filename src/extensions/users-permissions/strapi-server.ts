@@ -64,7 +64,7 @@ module.exports = (plugin) => {
     
     if (userWithThisNumber) {
         return ctx.badRequest(
-          "Пользователь с таким номером уже существует"
+          "Пользователь с таким номером уже существует. Выполните вход"
         );
     }
 
@@ -128,8 +128,6 @@ module.exports = (plugin) => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: data.id,
     })
-
-
 
     ctx.send({ jwt, user: data });
   };
