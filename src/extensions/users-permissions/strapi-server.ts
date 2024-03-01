@@ -66,6 +66,8 @@ module.exports = (plugin) => {
         return ctx.badRequest(
           "Пользователь с таким номером уже существует. Выполните вход"
         );
+    } else if (userWithThisNumber && !userWithThisNumber.confirm) {
+      await strapi.plugins['users-permissions'].services.user.remove({id: userWithThisNumber.id});
     }
 
     const username = await generateUniqueUsername(transliterate(name));
@@ -142,7 +144,6 @@ module.exports = (plugin) => {
     .query('plugin::users-permissions.user')
     .findOne(phone ? { where: {phone} } : { where: {id} });
 
-    console.log(user)
     if (user && !user.confirmed && phone) {
       return ctx.badRequest(
         "Пользователя с таким номером не существует"
