@@ -62,7 +62,7 @@ module.exports = (plugin) => {
         .query('plugin::users-permissions.user')
         .findOne({ where: {phone} });
     
-    if (userWithThisNumber) {
+    if (userWithThisNumber && userWithThisNumber.confirm) {
         return ctx.badRequest(
           "Пользователь с таким номером уже существует. Выполните вход"
         );
