@@ -62,11 +62,11 @@ module.exports = (plugin) => {
         .query('plugin::users-permissions.user')
         .findOne({ where: {phone} });
     
-    if (userWithThisNumber && userWithThisNumber.confirm) {
+    if (userWithThisNumber && userWithThisNumber.confirmed) {
         return ctx.badRequest(
           "Пользователь с таким номером уже существует. Выполните вход"
         );
-    } else if (userWithThisNumber && !userWithThisNumber.confirm) {
+    } else if (userWithThisNumber && !userWithThisNumber.confirmed) {
       await strapi.plugins['users-permissions'].services.user.remove({id: userWithThisNumber.id});
     }
 
