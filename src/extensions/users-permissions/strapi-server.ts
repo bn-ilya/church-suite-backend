@@ -4,13 +4,28 @@ const {transliterate} = require("transliteration");
 const {sendVoiceCode} = require("./external-api"); 
 const utils = require('@strapi/utils');
 
-const { sanitize } = utils;
+
+const { sanitize, validate } = utils;
+
+const validateQuery = async (query, ctx) => {
+  const schema = strapi.getModel('plugin::users-permissions.user');
+  const { auth } = ctx.state;
+
+  return validate.contentAPI.query(query, schema, { auth });
+};
 
 const sanitizeOutput = (user, ctx) => {
   const schema = strapi.getModel('plugin::users-permissions.user');
   const { auth } = ctx.state;
 
   return sanitize.contentAPI.output(user, schema, { auth });
+};
+
+const sanitizeQuery = async (query, ctx) => {
+  const schema = strapi.getModel('plugin::users-permissions.user');
+  const { auth } = ctx.state;
+
+  return sanitize.contentAPI.query(query, schema, { auth });
 };
 
 async function generateUniqueUsername(username: string, index = 0) {
@@ -52,6 +67,21 @@ module.exports = (plugin) => {
 
     ctx.body = await sanitizeOutput(user, ctx);
   }
+  plugin.controllers.user.find = async (ctx) => {
+    await validateQuery(ctx.query, ctx);
+    const sanitizedQuery = await sanitizeQuery(ctx.query, ctx);
+    const users = await utils.getService('user').fetchAll(sanitizedQuery);
+
+    users.map(async (user) => {
+      const lcForm = await strapi
+      .query('api::live-chat-client.live-chat-client')
+      .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques'], });
+      
+      return {...user, "lc_form": lcForm}
+    })
+
+    ctx.body = await Promise.all(users.map((user) => sanitizeOutput(user, ctx)));
+  },
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
