@@ -70,18 +70,20 @@ module.exports = (plugin) => {
   plugin.controllers.user.find = async (ctx) => {
     await validateQuery(ctx.query, ctx);
     const sanitizedQuery = await sanitizeQuery(ctx.query, ctx);
-    const users = await utils.getService('user').fetchAll(sanitizedQuery);
+    const users = await strapi.plugin('users-permissions').service("user").fetchAll(sanitizedQuery);
 
-    users.map(async (user) => {
+    const fullUsers = [];
+    for (const user of users) {
       const lcForm = await strapi
       .query('api::live-chat-client.live-chat-client')
       .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques'], });
-      
-      return {...user, "lc_form": lcForm}
-    })
 
-    ctx.body = await Promise.all(users.map((user) => sanitizeOutput(user, ctx)));
+      fullUsers.push({...user, "lc_form": lcForm});
+    }
+
+    ctx.body = await Promise.all(fullUsers.map((user) => sanitizeOutput(user, ctx)));
   },
+
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
