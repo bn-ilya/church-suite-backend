@@ -87,6 +87,12 @@ module.exports = (plugin) => {
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
+    await validateQuery(ctx.query, ctx);
+    const sanitizedQuery = await sanitizeQuery(ctx.query, ctx);
+    const users = await strapi.plugin('users-permissions').service("user").fetchAll(sanitizedQuery);
+    
+    if (users.length >= 330) return ctx.badRequest('Регистрация закрыта, количество зарегистрированных достигло лимита. Если вы уже зарегистрировались, то вы можете авторизоваться');
+
     if (!phone) return ctx.badRequest('Введите номер телефона');
     if (!name) return ctx.badRequest('Введите имя и фамилию');
     
