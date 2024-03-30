@@ -85,7 +85,7 @@ module.exports = (plugin) => {
   },
 
   plugin.controllers.user.createDefault = async (ctx) => {
-    const { name } = ctx.request.body;
+    const { name, ...props } = ctx.request.body;
 
     const username = await generateUniqueUsername(transliterate(name));
     
@@ -94,7 +94,8 @@ module.exports = (plugin) => {
         username,
         email: 'eqxample@example.ru',
         provider: 'local',
-        role: undefined
+        role: undefined,
+        ...props
     };
 
     const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
