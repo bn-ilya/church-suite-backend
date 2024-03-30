@@ -84,6 +84,42 @@ module.exports = (plugin) => {
     ctx.body = await Promise.all(fullUsers.map((user) => sanitizeOutput(user, ctx)));
   },
 
+  plugin.controllers.user.createDefault = async (ctx) => {
+    const { name } = ctx.request.body;
+
+    const username = await generateUniqueUsername(transliterate(name));
+    
+    const user = {
+        name,
+        username,
+        email: 'eqxample@example.ru',
+        provider: 'local',
+        role: undefined
+    };
+
+    const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
+    const settings: any = await pluginStore.get({ key: 'advanced' });
+
+    const role = await strapi
+      .query('plugin::users-permissions.role')
+      .findOne({ where: { type: settings.default_role } });
+
+    user.role = role.id;
+
+    
+    try {
+      const createdUser = await strapi.services['plugin::users-permissions.user'].add(user);
+      const response = {
+        name,
+        username,
+        id: createdUser.id
+      }
+      ctx.created(response);
+    } catch (error) {
+      ctx.badRequest(error);
+    }
+  };
+
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
@@ -298,6 +334,11 @@ module.exports = (plugin) => {
       method: "DELETE",
       path: "/profile",
       handler: "user.deleteUser",
+    },
+    {
+      method: "POST",
+      path: "/createDefault",
+      handler: "user.createDefault",
     },
   ];
 
