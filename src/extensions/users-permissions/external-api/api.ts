@@ -1,38 +1,52 @@
 import axios from "axios";
+import { isDevelopMode } from "../../../flags";
 
 axios.defaults.baseURL = 'https://direct.i-dgtl.ru/api/v1';
-axios.defaults.headers.common['Authorization'] = "Basic NjgyNDp2OEpxSUhEVGJxSVlUdEIzTkNXdmwy";
+axios.defaults.headers.common['Authorization'] = "Basic MTA5NTk6RW1YTkI3YXZUWHRLdExoQk1JUFVYNQ==";
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 export async function sendVoiceCode(code: string, phone: string) {
-  const response = await axios({
-    method: 'post',
-    url: '/message',
-    data: {
-      channelType: "VOICECODE",
-      senderName: "voicecode",
-      destination: phone,
-      content: {
-        contentType: "text",
-        text: `Код авторизации от лайв чат: ${code}`
+  try {
+    const response = await axios({
+      method: 'post',
+      url: '/message',
+      data: {
+        channelType: "VOICECODE",
+        senderName: "voicecode",
+        destination: phone,
+        content: {
+          contentType: "text",
+          text: `Код авторизации от лайв чат: ${code}`
+        }
       }
-    }
-  });
+    });
+  
+  
+    return response;
+  } catch (error) {
+    return error.response.data.error
+  }
 
-  return response;
 }
 
 export async function sendSmsCode(code: string, phone: string) {
-  const response = await axios({
-    method: 'post',
-    url: '/message',
-    data: {
-      channelType: "SMS",
-      senderName: "sms_promo",
-      destination: phone,
-      content: `Код авторизации от лайв чат: ${code}`
-    }
-  });
+  if (isDevelopMode) return "success";
+  try {
+    const response = await axios({
+      method: 'post',
+      url: '/message',
+      data: {
+        channelType: "SMS",
+        senderName: "sms_promo",
+        destination: phone,
+        content: `Код авторизации от лайв чат: ${code}`
+      }
+    });  
 
-  return response;
+    return response;
+  } catch (error) {
+    return error.response.data.error
+  }
+
+
 }
