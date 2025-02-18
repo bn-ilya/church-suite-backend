@@ -411,6 +411,7 @@ export interface ApiFormLiveChatFormLiveChat extends Schema.CollectionType {
     count: Attribute.Integer;
     comment: Attribute.String;
     cheque: Attribute.Media;
+    sender_name: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -445,6 +446,7 @@ export interface ApiLiveChatClientLiveChatClient extends Schema.CollectionType {
     count: Attribute.Integer & Attribute.Required;
     comment: Attribute.Text;
     cheques: Attribute.Media;
+    senderName: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

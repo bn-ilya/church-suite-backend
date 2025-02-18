@@ -33,6 +33,9 @@
         "videos",
         "audios"
       ]
+    },
+    "senderName": {
+      "type": "string"
     }
   }
 }
