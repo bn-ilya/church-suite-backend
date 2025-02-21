@@ -33,6 +33,15 @@
         "videos",
         "audios"
       ]
+    },
+    "senderName": {
+      "type": "string"
+    },
+    "live_chat_client_childrens": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::live-chat-client-children.live-chat-client-children",
+      "mappedBy": "live_chat_client"
     }
   }
 }

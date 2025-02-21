@@ -1,3 +1,4 @@
+import { isDevelopMode } from "../../flags";
 import { sendSmsCode } from "./external-api/api";
 
 const {transliterate} = require("transliteration");
@@ -59,7 +60,7 @@ module.exports = (plugin) => {
     
     const lcForm = await strapi
     .query('api::live-chat-client.live-chat-client')
-    .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques'], });
+    .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques', "live_chat_client_childrens"], });
 
     if (lcForm) {
       user["lc_form"] = lcForm;
@@ -124,7 +125,6 @@ module.exports = (plugin) => {
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
-    return ctx.badRequest('Регистрация закрыта, количество зарегистрированных достигло лимита. Если вы уже зарегистрировались, то вы можете авторизоваться');
 
     if (!phone) return ctx.badRequest('Введите номер телефона');
     if (!name) return ctx.badRequest('Введите имя и фамилию');
@@ -172,7 +172,7 @@ module.exports = (plugin) => {
         username,
         id: createdUser.id
       }
-      await sendVoiceCode(code, `+7${phone}`);
+      await sendSmsCode(code, `+7${phone}`);
       ctx.created(response);
     } catch (error) {
       ctx.badRequest(error);
@@ -347,6 +347,6 @@ module.exports = (plugin) => {
 };
 
 function random4Digit(){
-  return Math.floor(1000 + Math.random() * 9000);
+  return isDevelopMode ? 4444 : Math.floor(1000 + Math.random() * 9000);
 }
 
