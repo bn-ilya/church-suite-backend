@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "live_chat_client_childrens",
+  "info": {
+    "singularName": "live-chat-client-children",
+    "pluralName": "live-chat-client-childrens",
+    "displayName": "Live-chat client childrens"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "live_chat_client": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::live-chat-client.live-chat-client",
+      "inversedBy": "live_chat_client_childrens"
+    }
+  }
+}
