@@ -19,7 +19,7 @@ export default factories.createCoreController(
           )
         );
 
-        return createdEntries;
+        return {data: createdEntries};
       } catch (error) {
         // Обрабатываем ошибку
         return ctx.internalServerError("Something went wrong", error);
