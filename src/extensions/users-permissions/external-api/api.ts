@@ -16,7 +16,7 @@ export async function sendVoiceCode(code: string, phone: string) {
         destination: phone,
         content: {
           contentType: "text",
-          text: `Код авторизации от лайв чат: ${code}`
+          text: `${code} - код авторизации от live chat`
         }
       }
     });
@@ -39,7 +39,7 @@ export async function sendSmsCode(code: string, phone: string) {
         channelType: "SMS",
         senderName: "sms_promo",
         destination: phone,
-        content: `Код авторизации от лайв чат: ${code}`
+        content: `${code} - код авторизации от live chat`
       }
     });  
 
