@@ -77,7 +77,7 @@ module.exports = (plugin) => {
     for (const user of users) {
       const lcForm = await strapi
       .query('api::live-chat-client.live-chat-client')
-      .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques'], });
+      .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques', "live_chat_client_childrens"], });
 
       fullUsers.push({...user, "lc_form": lcForm});
     }
