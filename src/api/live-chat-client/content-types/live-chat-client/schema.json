@@ -42,6 +42,17 @@
       "relation": "oneToMany",
       "target": "api::live-chat-client-children.live-chat-client-children",
       "mappedBy": "live_chat_client"
+    },
+    "turnout": {
+      "type": "integer"
+    },
+    "debt": {
+      "type": "biginteger",
+      "default": "700"
+    },
+    "paid": {
+      "type": "biginteger",
+      "default": "0"
     }
   }
 }

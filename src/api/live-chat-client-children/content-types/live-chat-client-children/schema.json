@@ -4,7 +4,8 @@
   "info": {
     "singularName": "live-chat-client-children",
     "pluralName": "live-chat-client-childrens",
-    "displayName": "Live-chat client childrens"
+    "displayName": "Live-chat client childrens",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -19,6 +20,10 @@
       "relation": "manyToOne",
       "target": "api::live-chat-client.live-chat-client",
       "inversedBy": "live_chat_client_childrens"
+    },
+    "turnout": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2025-02-21T13:21:43.616Z"
+    "x-generation-date": "2025-03-23T07:45:53.971Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -1343,6 +1343,19 @@
                   ],
                   "example": "string or id"
                 }
+              },
+              "turnout": {
+                "type": "integer"
+              },
+              "debt": {
+                "type": "string",
+                "pattern": "^\\d*$",
+                "example": "123456789"
+              },
+              "paid": {
+                "type": "string",
+                "pattern": "^\\d*$",
+                "example": "123456789"
               }
             }
           }
@@ -2241,6 +2254,19 @@
                                         }
                                       }
                                     },
+                                    "turnout": {
+                                      "type": "integer"
+                                    },
+                                    "debt": {
+                                      "type": "string",
+                                      "pattern": "^\\d*$",
+                                      "example": "123456789"
+                                    },
+                                    "paid": {
+                                      "type": "string",
+                                      "pattern": "^\\d*$",
+                                      "example": "123456789"
+                                    },
                                     "createdAt": {
                                       "type": "string",
                                       "format": "date-time"
@@ -2292,6 +2318,9 @@
                               }
                             }
                           }
+                        },
+                        "turnout": {
+                          "type": "integer"
                         },
                         "createdAt": {
                           "type": "string",
@@ -2345,6 +2374,19 @@
                 }
               }
             }
+          },
+          "turnout": {
+            "type": "integer"
+          },
+          "debt": {
+            "type": "string",
+            "pattern": "^\\d*$",
+            "example": "123456789"
+          },
+          "paid": {
+            "type": "string",
+            "pattern": "^\\d*$",
+            "example": "123456789"
           },
           "createdAt": {
             "type": "string",
@@ -2438,6 +2480,9 @@
                   }
                 ],
                 "example": "string or id"
+              },
+              "turnout": {
+                "type": "integer"
               }
             }
           }
@@ -3178,6 +3223,9 @@
                                         }
                                       }
                                     },
+                                    "turnout": {
+                                      "type": "integer"
+                                    },
                                     "createdAt": {
                                       "type": "string",
                                       "format": "date-time"
@@ -3231,6 +3279,19 @@
                           }
                         }
                       },
+                      "turnout": {
+                        "type": "integer"
+                      },
+                      "debt": {
+                        "type": "string",
+                        "pattern": "^\\d*$",
+                        "example": "123456789"
+                      },
+                      "paid": {
+                        "type": "string",
+                        "pattern": "^\\d*$",
+                        "example": "123456789"
+                      },
                       "createdAt": {
                         "type": "string",
                         "format": "date-time"
@@ -3282,6 +3343,9 @@
                 }
               }
             }
+          },
+          "turnout": {
+            "type": "integer"
           },
           "createdAt": {
             "type": "string",
