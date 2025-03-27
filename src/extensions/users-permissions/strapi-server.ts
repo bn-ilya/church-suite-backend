@@ -142,7 +142,7 @@ module.exports = (plugin) => {
     const countChildrens = fullUsers.reduce((total, user) => total + (user?.lc_form?.live_chat_client_childrens?.length || 0) , 0)
     const allUsersCount = fullUsers.length + countChildrens
 
-    if (allUsersCount >= 320) return ctx.badRequest('Регистрация закрыта. Превышено допустимое количество зарегистрированных участников');
+    if (allUsersCount >= 330) return ctx.badRequest('Регистрация закрыта. Превышено допустимое количество зарегистрированных участников');
 
     if (!phone) return ctx.badRequest('Введите номер телефона');
     if (!name) return ctx.badRequest('Введите имя и фамилию');
