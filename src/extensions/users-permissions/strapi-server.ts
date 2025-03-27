@@ -125,6 +125,24 @@ module.exports = (plugin) => {
   plugin.controllers.user.create = async (ctx) => {
     const { phone, name } = ctx.request.body;
 
+    const users = await strapi
+    .query('plugin::users-permissions.user')
+    .findMany()
+  
+    const fullUsers = [];
+    for (const user of users) {
+      if (user["lc_form_id"] === null) continue;
+      const lcForm = await strapi
+      .query('api::live-chat-client.live-chat-client')
+      .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques', "live_chat_client_childrens"], });
+
+      fullUsers.push({...user, "lc_form": lcForm});
+    }
+
+    const countChildrens = fullUsers.reduce((total, user) => total + (user?.lc_form?.live_chat_client_childrens?.length || 0) , 0)
+    const allUsersCount = fullUsers.length + countChildrens
+
+    if (allUsersCount >= 320) return ctx.badRequest('Регистрация закрыта. Превышено допустимое количество зарегистрированных участников');
 
     if (!phone) return ctx.badRequest('Введите номер телефона');
     if (!name) return ctx.badRequest('Введите имя и фамилию');
