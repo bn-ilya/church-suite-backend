@@ -55,17 +55,11 @@ module.exports = (plugin) => {
   plugin.controllers.user.me = async (ctx) => {
     const user = ctx.state.user;
 
+
     if (!user) {
       return ctx.unauthorized();
     }
-    
-    const lcForm = await strapi
-    .query('api::live-chat-client.live-chat-client')
-    .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques', "live_chat_client_childrens"], });
-
-    if (lcForm) {
-      user["lc_form"] = lcForm;
-    }
+  
 
     ctx.body = await sanitizeOutput(user, ctx);
   }
