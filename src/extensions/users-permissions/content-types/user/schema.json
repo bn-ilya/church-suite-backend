@@ -71,10 +71,7 @@
     "code": {
       "type": "string"
     },
-    "name": {
-      "type": "string"
-    },
-    "lc_form_id": {
+    "formio_form_id": {
       "type": "string"
     }
   }

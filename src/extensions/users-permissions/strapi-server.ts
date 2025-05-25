@@ -3,6 +3,7 @@ import { sendSmsCode } from "./external-api/api";
 
 const {transliterate} = require("transliteration");
 const {sendVoiceCode} = require("./external-api"); 
+const { v4: uuidv4 } = require('uuid');
 const utils = require('@strapi/utils');
 
 
@@ -123,29 +124,9 @@ module.exports = (plugin) => {
   };
 
   plugin.controllers.user.create = async (ctx) => {
-    const { phone, name } = ctx.request.body;
-
-    const users = await strapi
-    .query('plugin::users-permissions.user')
-    .findMany()
+    const { phone } = ctx.request.body;
   
-    const fullUsers = [];
-    for (const user of users) {
-      if (user["lc_form_id"] === null) continue;
-      const lcForm = await strapi
-      .query('api::live-chat-client.live-chat-client')
-      .findOne({ where: {id: user["lc_form_id"]}, populate: ['cheques', "live_chat_client_childrens"], });
-
-      fullUsers.push({...user, "lc_form": lcForm});
-    }
-
-    const countChildrens = fullUsers.reduce((total, user) => total + (user?.lc_form?.live_chat_client_childrens?.length || 0) , 0)
-    const allUsersCount = fullUsers.length + countChildrens
-
-    if (allUsersCount >= 330) return ctx.badRequest('Регистрация закрыта. Превышено допустимое количество зарегистрированных участников');
-
     if (!phone) return ctx.badRequest('Введите номер телефона');
-    if (!name) return ctx.badRequest('Введите имя и фамилию');
     
     const userWithThisNumber = await strapi
         .query('plugin::users-permissions.user')
@@ -159,11 +140,9 @@ module.exports = (plugin) => {
       await strapi.plugins['users-permissions'].services.user.remove({id: userWithThisNumber.id});
     }
 
-    const username = await generateUniqueUsername(transliterate(name));
     const code = String(random4Digit());
-    
+    const username = uuidv4();
     const user = {
-        name,
         username,
         email: 'eqxample@example.ru',
         phone,
@@ -186,7 +165,6 @@ module.exports = (plugin) => {
       const createdUser = await strapi.services['plugin::users-permissions.user'].add(user);
       checkVerified(createdUser.id);
       const response = {
-        name,
         username,
         id: createdUser.id
       }
@@ -272,25 +250,14 @@ module.exports = (plugin) => {
 
   plugin.controllers.user.setLcForm = async (ctx) => {
     const user = ctx.state.user;
-    const {lcFormId} = ctx.request.body;
-
-    const lcForm = await strapi
-    .query('api::live-chat-client.live-chat-client')
-    .findOne({ where: {id: lcFormId} });
+    const {formio_form_id} = ctx.request.body;
 
     if (!user) {
       return ctx.unauthorized();
     }
 
-    if (!lcForm) {
-      return ctx.badRequest(
-        "Формы с ID не найдено"
-      );
-    }
-    
-
     let updateData = {
-      "lc_form_id": String(lcFormId)
+      "formio_form_id": formio_form_id
     };
 
     await strapi.plugins['users-permissions'].services.user.edit(user.id, updateData);
