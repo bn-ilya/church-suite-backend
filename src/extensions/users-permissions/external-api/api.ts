@@ -16,7 +16,7 @@ export async function sendVoiceCode(code: string, phone: string) {
         destination: phone,
         content: {
           contentType: "text",
-          text: `${code} - код регистрации на конференцию`
+          text: `${code} - код регистрации`
         }
       }
     });
@@ -39,7 +39,7 @@ export async function sendSmsCode(code: string, phone: string) {
         channelType: "SMS",
         senderName: "sms_promo",
         destination: phone,
-        content: `${code} - код регистрации на конференцию`
+        content: `${code} - код регистрации`
       }
     });  
 
